@@ -6,20 +6,20 @@ from logger import logging
 ca = certifi.where()
 
 class mongodbclient:
-    client = None
+    _client = None
     def __init__(self):
 
         try:
-            if mongodbclient.client is None:
+            if mongodbclient._client is None:
                 mongodb_url = os.getenv("connection_url")
                 if mongodb_url is None:
                     raise Exception(f"in environment variables mongo_db_url is not set ")
 
-                mongodbclient.client = pymongo.MongoClient(mongodb_url,tlsCAFile = ca)
-            self.client = mongodbclient.client
+                mongodbclient._client = pymongo.MongoClient(mongodb_url,tlsCAFile = ca)
+            self.client = mongodbclient._client
             self.database = self.client[os.getenv("database_name")]
             self.database_name = os.getenv("database_name")
             logging.info("mongodb connection was established successfully")
 
         except Exception as e:
-            raise Exception(e)
+            raise Exception(e) 

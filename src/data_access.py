@@ -4,32 +4,47 @@ import numpy as np
 from typing import Optional
 import os
 from mongodb.mongodb_connection import mongodbclient
+from logger import logging
 
 
 class Proj1Data:
 
     def __init__(self) -> None:
-        
         try:
-            self.mongo_client = mongodbclient(database_name=os.getenv("database_name"))
+            self.mongo_client = mongodbclient()
+            self.default_db = os.getenv("database_name")
+
+            if self.default_db is None:
+                raise ValueError("database_name not set in environment")
+
         except Exception as e:
-            raise Exception(e)
+            logging.error(f"Error initializing Proj1Data: {e}")
+            raise
 
-    def export_collection_as_dataframe(self, collection_name: str, database_name: Optional[str] = None) -> pd.DataFrame:
-        
+    def export_collection_as_dataframe(
+        self,
+        collection_name: str,
+        database_name: Optional[str] = None
+    ) -> pd.DataFrame:
+
         try:
-            if database_name is None:
-                collection = self.mongo_client.database[collection_name]
-            else:
-                collection = self.mongo_client[database_name][collection_name]
+            db_name = database_name if database_name else self.default_db
 
-            print("Fetching data from mongoDB")
+            collection = self.mongo_client.client[db_name][collection_name]
+
+            logging.info("Fetching data from MongoDB")
+
             df = pd.DataFrame(list(collection.find()))
-            print(f"Data fecthed with len: {len(df)}")
-            if "id" in df.columns.to_list():
-                df = df.drop(columns=["id"], axis=1)
-            df.replace({"na":np.nan},inplace=True)
+
+            logging.info(f"Data fetched with length: {len(df)}")
+
+            if "_id" in df.columns:
+                df.drop(columns=["_id"], inplace=True)
+
+            df.replace({"na": np.nan}, inplace=True)
+
             return df
 
         except Exception as e:
-            raise Exception(e, sys)
+            logging.error(f"Error exporting collection: {e}")
+            raise
