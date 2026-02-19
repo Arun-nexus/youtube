@@ -2,10 +2,9 @@
 __pycache__/
 *.py[codz]
 *$py.class
-original_dataset.csv
 # C extensions
 *.so
-
+original_dataset.csv
 # Distribution / packaging
 .Python
 build/
