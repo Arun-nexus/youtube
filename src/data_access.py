@@ -48,3 +48,12 @@ class Proj1Data:
         except Exception as e:
             logging.error(f"Error exporting collection: {e}")
             raise
+
+
+def load_data(path:str)->pd.DataFrame:
+    try:
+        df = pd.read_csv(path)
+        logging.info("data was successfully loaded. ")
+        return df
+    except Exception as e:
+        logging.error(f"problem occured in data loading for preprocessing as {e}")

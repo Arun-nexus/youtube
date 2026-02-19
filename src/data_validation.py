@@ -1,8 +1,10 @@
 import pandas as pd
 from logger import logging
+from notebook.configuration_file import load_parameters
 
 def valid():
     try:
+        params = load_parameters()
         print("Data validation started")
         df = pd.read_csv("original_dataset.csv")
         logging.info("Dataset loaded for validation")
