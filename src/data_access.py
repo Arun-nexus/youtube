@@ -57,3 +57,13 @@ def load_data(path:str)->pd.DataFrame:
         return df
     except Exception as e:
         logging.error(f"problem occured in data loading for preprocessing as {e}")
+        raise
+
+def save_data(path:str,file):
+    try:
+        
+        data = pd.DataFrame(file)
+        data.to_csv(path,index = False)
+    except Exception as e:
+        logging.error(f"file cannot be saved on your given path {e}")
+        raise

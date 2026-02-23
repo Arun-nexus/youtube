@@ -1,0 +1,55 @@
+stages:
+
+  data_ingestion:
+    cmd: python -m src.data_ingestion
+
+    deps:
+      - src/data_ingestion.py
+      - src/data_access.py
+      - notebook/configuration_file.py
+      - params.yaml
+    outs:
+      - data/original_dataset.csv
+
+  data_validation:
+    cmd: python -m src.data_validation
+    deps:
+      - src/data_validation.py
+      - data/original_dataset.csv
+
+  data_preprocessing:
+    cmd: python -m src.data_preprocessing
+    deps:
+      - src/data_preprocessing.py
+      - data/original_dataset.csv
+      - src/data_access.py
+      - notebook/configuration_file.py
+      - params.yaml
+    outs:
+      - data/train_x.csv
+      - data/train_y.csv
+      - data/test_x.csv
+      - data/test_y.csv
+      - model/vectorizer.pkl
+      
+
+  model_training:
+    cmd: python -m src.model_training
+    deps:
+      - src/model_training.py
+      - data/train_x.csv
+      - data/test_x.csv
+      - notebook/configuration_file.py
+      - params.yaml
+    outs:
+      - model/model.pkl
+
+  model_evaluation:
+    cmd: python -m src.model_evaluation
+    deps:
+      - src/model_evaluation.py
+      - data/train_y.csv
+      - data/test_y.csv
+      - model/model.pkl
+    outs:
+      - model/performance.png

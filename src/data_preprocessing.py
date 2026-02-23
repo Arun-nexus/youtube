@@ -1,12 +1,13 @@
 import pandas as pd
 from logger import logging
 from nltk.stem import WordNetLemmatizer
+import numpy as np
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from data_access import load_data
+from src.data_access import load_data,save_data
 from notebook.configuration_file import load_parameters
-
+import joblib
 def preprocess(text):
     try:
         text = re.sub(r'[^\w\s]', '', str(text).lower())
@@ -17,54 +18,59 @@ def preprocess(text):
     except Exception as e:
         logging.error(f"there is a problem occured while removing the phrases {e}")
         raise
-
-def data_transformation(df: pd.DataFrame)->pd.DataFrame:
-    try:    
+def sentiment_trasformation(df:pd.DataFrame):
+    try:
         logging.info("data transformation was started successfully")
-
-        sentiment = df["Sentiment"]
-        comment = df["Comment"]
-
         labels = {"positive": 1,
                 "neutral": 0,
                 "negative": -1}
 
-        y = sentiment.map(labels)
+        y = df.map(labels)
+        y = np.array(y)
         logging.info("sentiment was labeled as -1 , 0 , 1")
-        logging.info("removing punctuations from comments")
-        processed_comments = comment.apply(preprocess)
-        logging.info("lemmatization has been started")
+        return y
+    except Exception as e:
+        logging.error(f" sentiment was not transformed because {e}")
+        raise 
 
+def comment_transformation(df:pd.DataFrame,params):
+    try:    
+        logging.info("removing punctuations from comments")
+        processed_comments = df.apply(preprocess)
+        logging.info("lemmatization has been started")
         logging.info("data was lemmatized successfully")
         logging.info("comments has been started vectorizing")
-        vectorizer = TfidfVectorizer()
+        vectorizer = TfidfVectorizer(max_df=0.95)
         x = vectorizer.fit_transform(processed_comments)
         x = x.toarray()
         logging.info("comments has successfully vectorized")
-        preprocess_data = pd.DataFrame(x,y)
-
-        return preprocess_data
+        joblib.dump(vectorizer,params["model"]["vectorizer"])
+        return x
     except Exception as e:
         logging.error(f"problem occured in data transformation {e}")
         raise
 
-def split_and_save_data(preprocess_data:pd.DataFrame):
+def split_and_save_data(x:np.array,y:np.array):
 
     try:
         params = load_parameters()    
-        train,test= train_test_split(
-                preprocess_data,
+        train_x,train_y,test_x,test_y = train_test_split(
+                x,y,
                 test_size=params["train_test_split"]["test_size"],
                 random_state=params["train_test_split"]["random_state"],
             )
         logging.info("data was successfully divided into training and testing")
         
-        training_path = params["training_dataset"]
-        testing_path = params["testing_dataset"]
-        train.to_csv(training_path,index = False)
+        training_x_path = params["train_x"]
+        training_y_path = params["train_y"]
+        testing_x_path = params["test_x"]
+        testing_y_path = params["test_y"]
+        save_data(training_x_path,train_x)
+        save_data(training_y_path,train_y)
         logging.info("training dataset was saved successfully")
+        save_data(testing_x_path,test_x)
+        save_data(testing_y_path,test_y)
 
-        test.to_csv(testing_path,index = False)
         logging.info("testing dataset was saved successfully")
     except Exception as e:
         logging.error(f"problem occured during train test split {e}")
@@ -72,9 +78,11 @@ def split_and_save_data(preprocess_data:pd.DataFrame):
 
 
 def main():
-    df = load_data("original_dataset.csv")
-    df = data_transformation(df)
-    split_and_save_data(df)
+    params = load_parameters()
+    df = load_data(params["original_dataset_path"])
+    y = sentiment_trasformation(df["Sentiment"])
+    x = comment_transformation(df["Comment"],params)
+    split_and_save_data(x,y)
 
 
 

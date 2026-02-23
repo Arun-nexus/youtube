@@ -5,8 +5,8 @@ from notebook.configuration_file import load_parameters
 def valid():
     try:
         params = load_parameters()
-        print("Data validation started")
-        df = pd.read_csv("original_dataset.csv")
+        logging.info("Data validation started")
+        df = pd.read_csv(params["original_dataset_path"])
         logging.info("Dataset loaded for validation")
 
         expected_cols = {"Comment", "Sentiment"}

@@ -1,26 +1,30 @@
+import os
 from src.data_access import Proj1Data
 from notebook.configuration_file import load_parameters
 from logger import logging
-
-proj = Proj1Data()
-
+from src.data_access import save_data
 
 
-
-def loading_data_from_mongodb():
+def main():
     try:
-        print("data loading was started")
+        logging.info("Data ingestion started")
+        params = load_parameters()
+        output_path = params["original_dataset_path"]
+        project_root = os.getcwd()
+        full_path = os.path.join(project_root, output_path)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        proj = Proj1Data()
         df = proj.export_collection_as_dataframe("PROJECT-1-DATA")
 
-        logging.debug("data was successfully loaded from MongoDB")
-        params = load_parameters()
-        orignal_dataset_path = params["original_dataset_path"]
-        df.to_csv(orignal_dataset_path, index=False, header=True)
+        logging.info("Data successfully loaded from MongoDB")
+        save_data(full_path,df)
 
-        logging.info("original dataset saved successfully on your system")
+        logging.info(f"Dataset saved successfully at {full_path}")
 
     except Exception as e:
-        logging.error(f"error in data loading and saving from mongodb: {e}")
+        logging.error(f"Data ingestion failed: {e}")
         raise
 
 
+if __name__ == "__main__":
+    main()
