@@ -3,6 +3,7 @@ import os
 from googleapiclient.discovery import build
 import pandas as pd 
 from src.model_prediction import predict
+from notebook.configuration_file import load_parameters
 
 def fetching_video_id(url) -> str:
     parsed = urlparse(url)
@@ -14,32 +15,47 @@ def fetching_video_id(url) -> str:
 
     elif parsed.hostname == "youtu.be":
         return parsed.path.lstrip("/")
-
+    else:
+        return
     raise ValueError("Invalid YouTube URL")
 
 
 def comment_fetcher(video_id):
+    if video_id is None:
+        return 
     comments = []
+    dates = []
+
     api_key = os.getenv("youtube_api")
-
-    if not api_key:
-        raise ValueError("Youtube api key not found in environment variables")
-
     youtube = build("youtube", "v3", developerKey=api_key)
 
-    request = youtube.commentThreads().list(
-        part="snippet",
-        videoId=video_id,
-        maxResults=500
-    )
+    next_page_token = None
 
-    response = request.execute()
+    while True:
+        request = youtube.commentThreads().list(
+            part="snippet",
+            videoId=video_id,
+            maxResults=100,
+            pageToken=next_page_token
+        )
 
-    for item in response.get("items", []):
-        comment = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
-        comments.append(comment)
-    data = pd.DataFrame(comments)
-    data.to_csv("comment.csv",index= False)
+        response = request.execute()
+
+        for item in response.get("items", []):
+            snippet = item["snippet"]["topLevelComment"]["snippet"]
+            comments.append(snippet["textDisplay"])
+            dates.append(snippet["publishedAt"])
+
+        next_page_token = response.get("nextPageToken")
+
+        if not next_page_token:
+            break
+
+    data = pd.DataFrame({
+        "comment": comments,
+        "published_at": dates
+    })
+
     return data
 
 def main(url):
