@@ -1,29 +1,5 @@
 schema: '2.0'
 stages:
-  data_ingestion:
-    cmd: python -m src.data_ingestion
-    deps:
-    - path: notebook/configuration_file.py
-      hash: md5
-      md5: 8c273e966ab4981e55417d26d4dd1a11
-      size: 381
-    - path: params.yaml
-      hash: md5
-      md5: 7e5fc770a1549e3dc8912719b72a8635
-      size: 419
-    - path: src/data_access.py
-      hash: md5
-      md5: ee413a7b1f49a2f3309abbfe75895b83
-      size: 1921
-    - path: src/data_ingestion.py
-      hash: md5
-      md5: 728f792fb19dd6473dee0c190c87512d
-      size: 908
-    outs:
-    - path: data/original_dataset.csv
-      hash: md5
-      md5: ffe6fe24b3acaec7bbedd7a401ebcf45
-      size: 3506908
   data_validation:
     cmd: python -m src.data_validation
     deps:
@@ -35,50 +11,6 @@ stages:
       hash: md5
       md5: 240c61c236440321985e2057e1984735
       size: 746
-  data_preprocessing:
-    cmd: python -m src.data_preprocessing
-    deps:
-    - path: data/original_dataset.csv
-      hash: md5
-      md5: ffe6fe24b3acaec7bbedd7a401ebcf45
-      size: 3506908
-    - path: notebook/configuration_file.py
-      hash: md5
-      md5: 8c273e966ab4981e55417d26d4dd1a11
-      size: 381
-    - path: params.yaml
-      hash: md5
-      md5: 7e5fc770a1549e3dc8912719b72a8635
-      size: 419
-    - path: src/data_access.py
-      hash: md5
-      md5: ee413a7b1f49a2f3309abbfe75895b83
-      size: 1921
-    - path: src/data_preprocessing.py
-      hash: md5
-      md5: 3311cd5e1fb8323d5cdb0ea57e767a22
-      size: 3251
-    outs:
-    - path: data/test_x.csv
-      hash: md5
-      md5: 3c3150ab99510b9190785e8f09303c05
-      size: 46044
-    - path: data/test_y.csv
-      hash: md5
-      md5: d9041bc814a0e1dadc0a5680843bef8a
-      size: 11524
-    - path: data/train_x.csv
-      hash: md5
-      md5: f49ed4bd75d91d1fd1bc723523d8d2f1
-      size: 2172051926
-    - path: data/train_y.csv
-      hash: md5
-      md5: 93c519a621b98b75a9146bc30ee8961f
-      size: 543227017
-    - path: model/vectorizer.pkl
-      hash: md5
-      md5: a6168256802480d051ef35b5e90b0373
-      size: 790593
   model_training:
     cmd: python -m src.model_training
     deps:
