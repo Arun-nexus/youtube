@@ -19,6 +19,10 @@ app.add_middleware(
 class URLRequest(BaseModel):
     url: str
 
+@app.get("/")
+async def health():
+    return {"status":"running"}
+
 
 @app.post("/predict")
 async def get_prediction(request: URLRequest):

@@ -26,3 +26,13 @@ stages:
     - model/model.pkl
     outs:
     - model/performance.png
+
+  model_deployement:
+    cmd: python -m src.model_deployement
+    deps:
+    - src/model_deployement.py
+    - data/train_y.scv
+    - data/test_y.csv
+    - model/model/pkl
+    - model/production_model.pkl
+    

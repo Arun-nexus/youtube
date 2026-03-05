@@ -1,0 +1,8 @@
+.env
+.venv
+.gitignore
+logs/
+data/
+.dvcignore
+__pychache__/
+.dvc

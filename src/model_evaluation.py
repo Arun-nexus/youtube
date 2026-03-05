@@ -36,7 +36,7 @@ def model_performance(prediction:np.array,test_y:DataFrame,params):
         plt.title("model performance score")
         plt.savefig(params["model"]["metrics"]) 
         logging.info("model performance has been saved to performance.png file")
-
+        return model_accuracy
     except Exception as e:
         logging.error(f"problem occurred during model performance as {e}")
         raise
