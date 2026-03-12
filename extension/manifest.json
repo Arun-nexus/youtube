@@ -3,7 +3,7 @@
   "name": "YouTube Sentiment Analyzer",
   "version": "1.0",
   "permissions": ["tabs", "activeTab"],
-  "host_permissions": ["http://localhost:8000/*"],
+  "host_permissions": ["http://3.85.29.238:8000/*"],
   "action": {
     "default_popup": "popup.html"
   }

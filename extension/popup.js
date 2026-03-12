@@ -14,7 +14,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 
     totalElement.innerText = "Analyzing comments...";
 
-    fetch("http://localhost:8000/predict", {
+    fetch("http://3.85.29.238:8000/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url })
