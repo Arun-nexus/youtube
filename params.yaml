@@ -1,0 +1,22 @@
+original_dataset_path: data/original_dataset.csv
+train_x: data/train_x.csv
+train_y: data/train_y.csv
+test_x: data/test_x.csv
+test_y: data/test_y.csv
+comment : data/comments.csv
+
+bucket_name : youtube-extesion
+key : mlflow/123456789012345678/artifacts/model/model.pkl
+model : 
+      model_file : model/model.pkl
+      metrics : model/performance.png
+      vectorizer : model/vectorizer.pkl
+      production_path : model/production_model.pkl
+train_test_split:
+  test_size: 0.2
+  random_state: 7
+
+model_parameters:
+  max_depth: -1
+  learning_rate: 0.1
+  n_estimators: 100

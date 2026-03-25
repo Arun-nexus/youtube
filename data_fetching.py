@@ -28,7 +28,6 @@ def comment_fetcher(video_id):
 
     api_key = os.getenv("youtube_api")
     youtube = build("youtube", "v3", developerKey=api_key)
-
     next_page_token = None
 
     while True:
