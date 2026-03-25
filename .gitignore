@@ -2,7 +2,6 @@
 src/exp.ipynb
 comment
 data/
-model/
 logs/
 __pycache__/
 *.py[codz]

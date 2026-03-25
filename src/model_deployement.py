@@ -14,7 +14,7 @@ def compare_and_deploy():
         s3 = boto3.client("s3")
         params = load_parameters()
 
-        # download production model
+     
         s3.download_file(
             params["bucket_name"],
             params["model_key"],
